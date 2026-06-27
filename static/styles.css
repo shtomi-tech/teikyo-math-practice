@@ -24,12 +24,14 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
 button:focus-visible,
 input:focus-visible,
+select:focus-visible,
 .cell:focus-visible,
 .group-item:focus-visible,
 .solution-card:focus-visible,
@@ -50,9 +52,31 @@ button {
 
 button:hover { background: #2b2926; }
 button:active { transform: translateY(1px); }
+button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
 button.ghost { background: transparent; color: var(--ink); }
 button.ghost:hover { background: var(--ink); color: var(--parchment); }
+button.ghost.danger:hover { background: var(--ng); border-color: var(--ng); color: var(--parchment); }
+button:disabled:hover {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--ink);
+}
 button.primary { border-radius: 0 0 8px 8px; }
+
+select,
+input[type="text"] {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 8px 10px;
+}
 
 h1,
 h2,
@@ -230,6 +254,36 @@ p {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.student-panel h2 {
+  margin-bottom: 10px;
+}
+
+.student-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.student-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.student-actions button {
+  padding-inline: 8px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.hidden-input {
+  display: none;
 }
 
 .checkline {

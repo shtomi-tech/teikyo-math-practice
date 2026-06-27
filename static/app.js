@@ -3,13 +3,18 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 const DATA = window.TEIKYO_DATA || { problem_groups: [] };
 const groups = DATA.problem_groups || [];
-const STORAGE_KEY = "teikyo_2026_math_practice_v1";
+const LEGACY_PROGRESS_KEY = "teikyo_2026_math_practice_v1";
+const STUDENTS_KEY = "teikyo_2026_math_students_v1";
+const CURRENT_STUDENT_KEY = "teikyo_2026_math_current_student_v1";
+const PROGRESS_PREFIX = "teikyo_2026_math_progress_v1:";
 
 let currentGroup = 0;
 let answers = {};
 let graded = false;
 let active = null;
-let progress = loadProgress();
+let students = loadStudents();
+let currentStudentName = loadCurrentStudent();
+let progress = {};
 
 const DETAIL_TEXT = {
   "1-(1)": [
@@ -136,16 +141,74 @@ const DETAIL_TEXT = {
   ]
 };
 
-function loadProgress() {
+function readJson(key, fallback) {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
   } catch {
-    return {};
+    return fallback;
   }
 }
 
+function writeJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function normalizeStudentName(name = "") {
+  return String(name).trim().replace(/\s+/g, " ");
+}
+
+function progressKeyFor(name) {
+  return `${PROGRESS_PREFIX}${encodeURIComponent(name)}`;
+}
+
+function loadStudents() {
+  const list = readJson(STUDENTS_KEY, []);
+  return Array.isArray(list) ? [...new Set(list.map(normalizeStudentName).filter(Boolean))] : [];
+}
+
+function saveStudents() {
+  writeJson(STUDENTS_KEY, students);
+}
+
+function loadCurrentStudent() {
+  const name = normalizeStudentName(localStorage.getItem(CURRENT_STUDENT_KEY) || "");
+  return name;
+}
+
+function setCurrentStudent(name) {
+  currentStudentName = normalizeStudentName(name);
+  localStorage.setItem(CURRENT_STUDENT_KEY, currentStudentName);
+  progress = loadProgressFor(currentStudentName);
+}
+
+function loadProgressFor(name) {
+  if (!name) return {};
+  return readJson(progressKeyFor(name), {});
+}
+
 function saveProgress() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  if (!currentStudentName) return;
+  writeJson(progressKeyFor(currentStudentName), progress);
+}
+
+function migrateLegacyProgress() {
+  const legacyRaw = localStorage.getItem(LEGACY_PROGRESS_KEY);
+  if (!legacyRaw || localStorage.getItem(`${LEGACY_PROGRESS_KEY}_migrated`)) return;
+  const legacy = readJson(LEGACY_PROGRESS_KEY, {});
+  if (!legacy || !Object.keys(legacy).length) {
+    localStorage.setItem(`${LEGACY_PROGRESS_KEY}_migrated`, "1");
+    return;
+  }
+  const legacyStudent = "既存データ";
+  if (!students.includes(legacyStudent)) {
+    students.push(legacyStudent);
+    saveStudents();
+  }
+  if (!localStorage.getItem(progressKeyFor(legacyStudent))) {
+    writeJson(progressKeyFor(legacyStudent), legacy);
+  }
+  if (!currentStudentName) setCurrentStudent(legacyStudent);
+  localStorage.setItem(`${LEGACY_PROGRESS_KEY}_migrated`, "1");
 }
 
 function escapeHtml(text = "") {
@@ -265,6 +328,81 @@ function renderProgress() {
   const total = totalCount();
   $("#progressText").textContent = `${done} / ${total} 小問完了`;
   $("#progressFill").style.width = total ? `${Math.round((done / total) * 100)}%` : "0%";
+}
+
+function renderStudentMenu() {
+  const sel = $("#studentSel");
+  sel.innerHTML = [`<option value="">ゲスト（記録なし）</option>`]
+    .concat(students.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`))
+    .join("");
+  sel.value = students.includes(currentStudentName) ? currentStudentName : "";
+  if (sel.value !== currentStudentName) setCurrentStudent("");
+
+  const hasStudent = Boolean(currentStudentName);
+  $("#renameStudentBtn").disabled = !hasStudent;
+  $("#deleteStudentBtn").disabled = !hasStudent;
+  $("#studentHint").textContent = hasStudent
+    ? `${currentStudentName} さんの進捗を保存中です。`
+    : "ゲスト：記録は保存されません。生徒を選ぶと進捗が残ります。";
+}
+
+function refreshStudentView() {
+  ensureAnswersForGroup();
+  render();
+}
+
+function addStudent() {
+  const input = $("#newStudent");
+  if (input.classList.contains("hidden-input")) {
+    input.classList.remove("hidden-input");
+    input.focus();
+    return;
+  }
+  const name = normalizeStudentName(input.value);
+  if (!name) {
+    input.focus();
+    return;
+  }
+  if (!students.includes(name)) {
+    students.push(name);
+    students.sort((a, b) => a.localeCompare(b, "ja"));
+    saveStudents();
+  }
+  input.value = "";
+  input.classList.add("hidden-input");
+  setCurrentStudent(name);
+  refreshStudentView();
+}
+
+function renameStudent() {
+  const oldName = currentStudentName;
+  if (!oldName) return;
+  const nextName = normalizeStudentName(prompt("新しい生徒名を入力してください。", oldName) || "");
+  if (!nextName || nextName === oldName) return;
+
+  const oldProgress = loadProgressFor(oldName);
+  const nextProgress = loadProgressFor(nextName);
+  const mergedProgress = { ...oldProgress, ...nextProgress };
+
+  students = students.filter((name) => name !== oldName);
+  if (!students.includes(nextName)) students.push(nextName);
+  students.sort((a, b) => a.localeCompare(b, "ja"));
+  saveStudents();
+  writeJson(progressKeyFor(nextName), mergedProgress);
+  localStorage.removeItem(progressKeyFor(oldName));
+  setCurrentStudent(nextName);
+  refreshStudentView();
+}
+
+function deleteStudent() {
+  const name = currentStudentName;
+  if (!name) return;
+  if (!confirm(`${name} さんの進捗記録を削除しますか。`)) return;
+  students = students.filter((student) => student !== name);
+  saveStudents();
+  localStorage.removeItem(progressKeyFor(name));
+  setCurrentStudent("");
+  refreshStudentView();
 }
 
 function renderField(field) {
@@ -514,7 +652,8 @@ function randomUnfinished() {
 }
 
 function resetProgress() {
-  if (!confirm("帝京大ミニアプリの進捗をリセットしますか。")) return;
+  const target = currentStudentName ? `${currentStudentName} さんの進捗` : "ゲストの画面内進捗";
+  if (!confirm(`${target}をリセットしますか。`)) return;
   progress = {};
   saveProgress();
   ensureAnswersForGroup();
@@ -528,6 +667,20 @@ function bindStaticEvents() {
   $("#resetProgressBtn").addEventListener("click", resetProgress);
   $("#printBtn").addEventListener("click", () => window.print());
   $("#hideSolutions").addEventListener("change", renderSolutions);
+  $("#studentSel").addEventListener("change", (event) => {
+    setCurrentStudent(event.target.value);
+    refreshStudentView();
+  });
+  $("#addStudentBtn").addEventListener("click", addStudent);
+  $("#newStudent").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") addStudent();
+    if (event.key === "Escape") {
+      event.currentTarget.value = "";
+      event.currentTarget.classList.add("hidden-input");
+    }
+  });
+  $("#renameStudentBtn").addEventListener("click", renameStudent);
+  $("#deleteStudentBtn").addEventListener("click", deleteStudent);
   $("#modalCloseBtn").addEventListener("click", closeSolutionModal);
   $("#solutionModal").addEventListener("click", (event) => {
     if (event.target.id === "solutionModal") closeSolutionModal();
@@ -538,6 +691,7 @@ function bindStaticEvents() {
 }
 
 function render() {
+  renderStudentMenu();
   renderGroups();
   renderProgress();
   renderProblem();
@@ -548,6 +702,13 @@ function render() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  migrateLegacyProgress();
+  if (currentStudentName && !students.includes(currentStudentName)) {
+    students.push(currentStudentName);
+    students.sort((a, b) => a.localeCompare(b, "ja"));
+    saveStudents();
+  }
+  progress = loadProgressFor(currentStudentName);
   bindStaticEvents();
   ensureAnswersForGroup();
   render();

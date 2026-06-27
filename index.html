@@ -33,6 +33,20 @@
         <p class="meter-text" id="progressText">0 / 0</p>
       </section>
 
+      <section class="panel student-panel">
+        <h2>生徒</h2>
+        <div class="student-tools">
+          <select id="studentSel" title="生徒を選択"></select>
+          <input id="newStudent" class="hidden-input" type="text" placeholder="新しい生徒の名前" autocomplete="off">
+          <div class="student-actions">
+            <button id="addStudentBtn" type="button">新規</button>
+            <button id="renameStudentBtn" class="ghost" type="button">改名</button>
+            <button id="deleteStudentBtn" class="ghost danger" type="button">削除</button>
+          </div>
+          <p id="studentHint" class="hint">ゲスト：記録は保存されません。</p>
+        </div>
+      </section>
+
       <section class="panel">
         <div class="section-head">
           <h2>大問</h2>
