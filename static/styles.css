@@ -573,6 +573,43 @@ details.panel[open] summary,
   background: rgba(220, 38, 38, .04);
 }
 
+.sub-checkbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.sub-check-button {
+  min-width: 150px;
+}
+
+.check-result {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+.check-result.pending,
+.result-row .pending {
+  color: var(--muted);
+}
+
+.check-result.ok,
+.result-row .ok {
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.check-result.ng,
+.result-row .ng {
+  color: var(--ng);
+  font-weight: 700;
+}
+
 .sub-head {
   display: flex;
   justify-content: space-between;
@@ -971,6 +1008,15 @@ details.panel[open] summary,
 
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .sub-checkbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sub-check-button {
+    width: 100%;
   }
 }
 

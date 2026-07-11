@@ -64,6 +64,7 @@ let answerDrafts = {};
 let graded = false;
 let active = null;
 let modalReturnFocus = null;
+let checkedSubs = {};
 let students = loadStudents();
 let currentStudentName = loadCurrentStudent();
 let progress = {};
@@ -417,6 +418,7 @@ function ensureAnswersForGroup() {
   });
   answerDrafts[draftKey] = answers;
   graded = false;
+  checkedSubs = {};
   setFirstAvailableActive();
 }
 
@@ -609,7 +611,9 @@ function deleteStudent() {
 function renderField(field) {
   const values = answers[field.uid] || [];
   const cells = values.map((value, cellIndex) => {
-    const state = graded ? (isFieldCorrect(field) ? "correct" : "wrong") : "";
+    const subIndex = Number(field.uid.split("-")[1]);
+    const checked = isSubChecked(subIndex);
+    const state = checked ? (isFieldCorrect(field) ? "correct" : "wrong") : "";
     const isActive = active && active.uid === field.uid && active.cellIndex === cellIndex;
     return `<button class="cell ${state} ${isActive ? "active" : ""}" type="button"
       data-cell="${field.uid}" data-cell-index="${cellIndex}" aria-label="${escapeHtml(field.title)} ${cellIndex + 1}マス目">${escapeHtml(value)}</button>`;
@@ -668,14 +672,75 @@ function renderHintBox(group, sub, subIndex, fields) {
   </div>`;
 }
 
+function subResult(subIndex) {
+  return checkedSubs[subKey(currentGroup, subIndex)] || null;
+}
+
+function isSubChecked(subIndex) {
+  return Boolean(subResult(subIndex));
+}
+
+function activeSubIndex() {
+  const entry = activeEntry();
+  return entry ? entry.subIndex : null;
+}
+
+function gradeSubProblem(subIndex) {
+  const group = groups[currentGroup];
+  const sub = group.sub_problems[subIndex];
+  if (!sub) return null;
+  const fields = createViewFields(currentGroup, subIndex, sub);
+  const blank = fields.some((field) => !isFieldFilled(field));
+  if (blank) return null;
+  const correctFields = fields.filter(isFieldCorrect).length;
+  const result = {
+    checked: true,
+    correct: correctFields === fields.length,
+    correctFields,
+    total: fields.length,
+    at: new Date().toISOString(),
+  };
+  checkedSubs[subKey(currentGroup, subIndex)] = result;
+  graded = Object.keys(checkedSubs).length > 0;
+  if (result.correct) {
+    const key = subKey(currentGroup, subIndex);
+    progress[key] = { ...(progress[key] || {}), correct: true, at: result.at };
+  }
+  return result;
+}
+
+function invalidateSubCheck(subIndex) {
+  if (subIndex == null) return;
+  delete checkedSubs[subKey(currentGroup, subIndex)];
+  graded = Object.keys(checkedSubs).length > 0;
+}
+
+function focusSubFirstBlank(subIndex) {
+  const blank = fieldEntries().find(({ field, cellIndex, subIndex: entrySubIndex }) =>
+    entrySubIndex === subIndex && !answers[field.uid]?.[cellIndex]
+  );
+  if (!blank) return;
+  active = { uid: blank.field.uid, cellIndex: blank.cellIndex };
+  renderProblem();
+  renderActiveLabel();
+  focusActiveCell();
+}
+
 function renderSubProblem(sub, subIndex) {
   const group = groups[currentGroup];
   const fields = createViewFields(currentGroup, subIndex, sub);
   const filled = fields.filter(isFieldFilled).length;
-  const isCorrect = graded && fields.every(isFieldCorrect);
-  const isWrong = graded && !isCorrect;
+  const result = subResult(subIndex);
+  const isCorrect = result?.correct;
+  const isWrong = result && !result.correct;
   const hintsUsed = progress[subKey(currentGroup, subIndex)]?.hintsUsed || 0;
   const noHintBadge = isCorrect && hintsUsed === 0 ? `<span class="no-hint-badge">ノーヒント正解</span>` : "";
+  const resultText = !result
+    ? "未確認"
+    : result.correct
+      ? "正解です"
+      : `${result.correctFields}/${result.total} 正解・入力内容を見直してください`;
+  const resultClass = !result ? "pending" : result.correct ? "ok" : "ng";
   return `<article class="sub-card ${isCorrect ? "correct" : ""} ${isWrong ? "wrong" : ""}" data-sub="${subIndex}">
     <div class="sub-head">
       <div class="sub-label">${escapeHtml(sub.label)}</div>
@@ -684,6 +749,12 @@ function renderSubProblem(sub, subIndex) {
     <div class="sub-stem"><p>${mdLite(sub.stem_md)}</p></div>
     <div class="fields">${fields.map(renderField).join("")}</div>
     ${renderHintBox(group, sub, subIndex, fields)}
+    <div class="sub-checkbar">
+      <span class="check-result ${resultClass}" aria-live="polite">${resultText}</span>
+      <button class="sub-check-button ${result ? "ghost" : "primary"}" type="button" data-check-sub="${subIndex}" ${filled < fields.length ? "disabled" : ""}>
+        ${result ? "もう一度確認" : "この小問を確認"}
+      </button>
+    </div>
   </article>`;
 }
 
@@ -699,6 +770,7 @@ function renderProblem() {
   $("#subList").innerHTML = (group.sub_problems || []).map(renderSubProblem).join("");
   bindCells();
   bindHints();
+  bindSubChecks();
   renderMath($("#groupStem"));
   renderMath($("#subList"));
 }
@@ -775,6 +847,9 @@ function renderActiveLabel() {
 
 function handleKey(key) {
   if (!active) return;
+  const editedSubIndex = activeSubIndex();
+  const changesAnswer = key !== "次へ";
+  if (changesAnswer) invalidateSubCheck(editedSubIndex);
   const cells = answers[active.uid];
   if (!cells) return;
   if (key === "⌫") {
@@ -790,9 +865,13 @@ function handleKey(key) {
     moveNextCell();
   }
   persistCurrentAnswers();
-  if ($("#instantCheck").checked) graded = true;
+  if (changesAnswer && $("#instantCheck").checked && editedSubIndex != null) {
+    gradeSubProblem(editedSubIndex);
+    saveProgress();
+  }
   renderProblem();
   renderScore(true);
+  renderSolutions();
   renderActiveLabel();
 }
 
@@ -816,13 +895,11 @@ function movePrevIfEmpty() {
 }
 
 function gradeCurrent() {
-  graded = true;
+  checkedSubs = {};
+  graded = false;
   const group = groups[currentGroup];
   (group.sub_problems || []).forEach((sub, subIndex) => {
-    const fields = createViewFields(currentGroup, subIndex, sub);
-    const correct = fields.every(isFieldCorrect);
-    const key = subKey(currentGroup, subIndex);
-    progress[key] = { ...(progress[key] || {}), correct, at: new Date().toISOString() };
+    gradeSubProblem(subIndex);
   });
   saveProgress();
   persistCurrentAnswers();
@@ -833,8 +910,17 @@ function groupResults() {
   const group = groups[currentGroup];
   return (group.sub_problems || []).map((sub, subIndex) => {
     const fields = createViewFields(currentGroup, subIndex, sub);
+    const checked = subResult(subIndex);
     const correctFields = fields.filter(isFieldCorrect).length;
-    return { sub, subIndex, fields, correctFields, total: fields.length, correct: correctFields === fields.length };
+    return {
+      sub,
+      subIndex,
+      fields,
+      correctFields,
+      total: fields.length,
+      checked: Boolean(checked),
+      correct: Boolean(checked?.correct),
+    };
   });
 }
 
@@ -843,7 +929,7 @@ function anyBlankField() {
 }
 
 function anyWrongField() {
-  return fieldEntries().some(({ field }) => !isFieldCorrect(field));
+  return groupResults().some((result) => result.checked && !result.correct);
 }
 
 function renderNextIssueBtn() {
@@ -851,6 +937,24 @@ function renderNextIssueBtn() {
   const hasIssue = graded ? anyWrongField() : anyBlankField();
   button.disabled = !hasIssue;
   button.textContent = graded ? "誤答へ" : "未入力へ";
+}
+
+function bindSubChecks() {
+  $$('[data-check-sub]').forEach((button) => {
+    button.addEventListener("click", () => checkSubProblem(Number(button.dataset.checkSub)));
+  });
+}
+
+function checkSubProblem(subIndex) {
+  const result = gradeSubProblem(subIndex);
+  if (!result) {
+    focusSubFirstBlank(subIndex);
+    return;
+  }
+  saveProgress();
+  render();
+  const card = document.querySelector(`[data-sub="${subIndex}"]`);
+  card?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function movePrevCell() {
@@ -877,26 +981,35 @@ function renderScore(forceBlank = false) {
   }
   const results = groupResults();
   const correct = results.filter((r) => r.correct).length;
+  const checked = results.filter((r) => r.checked).length;
   const total = results.length;
   $("#gradeBtn").textContent = graded ? "再採点する" : "採点する";
   renderNextIssueBtn();
-  $("#scoreBox").innerHTML = `<span class="score-main">${correct}/${total}</span><span class="score-sub">正答率 ${Math.round((correct / total) * 100)}%</span>`;
+  const scoreLabel = checked < total
+    ? `確認済み ${checked}/${total}小問`
+    : `正答率 ${Math.round((correct / total) * 100)}%`;
+  $("#scoreBox").innerHTML = `<span class="score-main">${correct}/${checked || 0}</span><span class="score-sub">${scoreLabel}</span>`;
   $("#resultList").innerHTML = results.map((r) => `<div class="result-row">
     <span>${escapeHtml(r.sub.label)}</span>
-    <span class="${r.correct ? "ok" : "ng"}">${r.correct ? "正解" : `${r.correctFields}/${r.total}`}</span>
+    <span class="${!r.checked ? "pending" : r.correct ? "ok" : "ng"}">${!r.checked ? "未確認" : r.correct ? "正解" : `${r.correctFields}/${r.total}`}</span>
     <small class="hint-log">ヒント${progress[subKey(currentGroup, r.subIndex)]?.hintsUsed || 0}回</small>
   </div>`).join("");
 }
 
 function renderSolutions() {
-  if (!graded && $("#hideSolutions").checked) {
+  const group = groups[currentGroup];
+  const visibleSubs = $("#hideSolutions").checked
+    ? (group.sub_problems || []).filter((_, subIndex) => isSubChecked(subIndex))
+    : (group.sub_problems || []);
+  if (!visibleSubs.length) {
     $("#solutionList").classList.add("muted");
-    $("#solutionList").textContent = "採点後に表示します。";
+    $("#solutionList").textContent = $("#hideSolutions").checked
+      ? "小問を確認すると、その小問の解説が表示されます。"
+      : "解説はありません。";
     return;
   }
   $("#solutionList").classList.remove("muted");
-  const group = groups[currentGroup];
-  $("#solutionList").innerHTML = (group.sub_problems || []).map((sub) => `
+  $("#solutionList").innerHTML = visibleSubs.map((sub) => `
     <button class="solution-card" type="button" data-solution="${currentGroup}-${group.sub_problems.indexOf(sub)}">
       <h3>${escapeHtml(sub.label)} solution</h3>
       <p>${mdLite(sub.solution_md || "")}</p>
