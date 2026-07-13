@@ -1038,8 +1038,47 @@ function detailStepsHtml(group, sub) {
   return `<ol>${steps.map((step) => `<li>${mdLite(step)}</li>`).join("")}</ol>`;
 }
 
-function learningPointsHtml(sub) {
+function learningPointsFor(group, sub) {
   const points = Array.isArray(sub.learning_points) ? sub.learning_points.filter(Boolean) : [];
+  if (points.length) return points;
+  const topic = `${group.title || ""} ${group.topic_tag || ""}`;
+  if (/確率|場合の数|カード|数直線/.test(topic)) {
+    return [
+      "まず、起こり方を数えるための基準となる量を決める。",
+      "条件を満たす場合を、重複や数え漏れがない形に言い換える。",
+      "最後に、求めた場合の数や確率が条件と一致するか確認する。"
+    ];
+  }
+  if (/三角|円|図形|座標|ベクトル/.test(topic)) {
+    return [
+      "図形の条件を、長さ・角度・平行などの関係へ翻訳する。",
+      "使える定理を選び、既知の量を次の計算へつなぐ。",
+      "図形全体の条件と、求める量の関係を最後に確認する。"
+    ];
+  }
+  if (/微分|積分|放物線|最大|最小|接線/.test(topic)) {
+    return [
+      "式を扱いやすい形へ変形し、変数や置き換えの範囲を確認する。",
+      "最大・最小や面積では、定義域と端点を忘れずに調べる。",
+      "計算結果を、元の関数や図形の条件に戻して解釈する。"
+    ];
+  }
+  if (/数と式|整式|約数|対数|指数|データ/.test(topic)) {
+    return [
+      "与えられた式や条件を、使いやすい標準形に整理する。",
+      "公式をそのまま使う前に、何を一つのまとまりとして扱うか考える。",
+      "最後に条件を代入し、答えが元の問題に合っているか確認する。"
+    ];
+  }
+  return [
+    "問題の条件を、計算できる関係へ置き換える。",
+    "途中で得た結果を、次の小問の道具として再利用する。",
+    "答えを元の条件に戻して確認する。"
+  ];
+}
+
+function learningPointsHtml(group, sub) {
+  const points = learningPointsFor(group, sub);
   if (!points.length) return "";
   return `
     <section class="detail-section learning-section">
@@ -1068,7 +1107,7 @@ function openSolutionModal(groupIndex, subIndex) {
         <h3>詳しい解き方</h3>
         ${detailStepsHtml(group, sub)}
       </section>
-      ${learningPointsHtml(sub)}
+      ${learningPointsHtml(group, sub)}
     </div>
   `;
   modalReturnFocus = document.activeElement;
