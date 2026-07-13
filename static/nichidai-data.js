@@ -25,7 +25,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "5", "boxes": ["1"]},
             {"format": "integer", "value": "8", "boxes": ["2"]}
           ],
-          "solution_md": "$x=2$ を代入すると $4-4a+a^{2}-9=0$ より $a^{2}-4a-5=0$、$(a-5)(a+1)=0$。$a>0$ なので $a=5$。解と係数の関係より2解の和は $2a=10$ なので、もう1つの解は $10-2=8$。"
+          "solution_md": "$x=2$ を代入すると $4-4a+a^{2}-9=0$ より $a^{2}-4a-5=0$、$(a-5)(a+1)=0$。$a>0$ なので $a=5$。解と係数の関係より2解の和は $2a=10$ なので、もう1つの解は $10-2=8$。",
+          "learning_points": [
+            "既知の解を代入して、未知の定数を決める方程式を作る。",
+            "条件に合わない解を、定義域や符号条件で除外する。",
+            "二次方程式の残りの解は、解と係数の関係で求められる。"
+          ]
         },
         {
           "label": "(2)",
@@ -34,7 +39,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "3", "boxes": ["3"]},
             {"format": "integer", "value": "8", "boxes": ["4"]}
           ],
-          "solution_md": "命題が真であるためには区間 $[1,6]$ が区間 $[k^{2}-7k-7,\\,k^{2}-k]$ に含まれればよい。$k^{2}-7k-7\\le1$ より $(k-8)(k+1)\\le0$ で $-1\\le k\\le8$。$k^{2}-k\\ge6$ より $(k-3)(k+2)\\ge0$ で $k\\le-2$ または $k\\ge3$。両方を満たすのは $3\\le k\\le8$。"
+          "solution_md": "命題が真であるためには区間 $[1,6]$ が区間 $[k^{2}-7k-7,\\,k^{2}-k]$ に含まれればよい。$k^{2}-7k-7\\le1$ より $(k-8)(k+1)\\le0$ で $-1\\le k\\le8$。$k^{2}-k\\ge6$ より $(k-3)(k+2)\\ge0$ で $k\\le-2$ または $k\\ge3$。両方を満たすのは $3\\le k\\le8$。",
+          "learning_points": [
+            "区間の包含を、左端と右端の2つの不等式に翻訳する。",
+            "必要条件を分けて解き、最後に共通範囲をとる。",
+            "命題の条件は、数直線上の包含関係に置き換えると整理しやすい。"
+          ]
         },
         {
           "label": "(3)",
@@ -42,7 +52,11 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
           "answer_fields": [
             {"format": "signed_integer", "value": "-13", "boxes": ["5", "6", "7"]}
           ],
-          "solution_md": "$(1+2i)^{3}=1+3(2i)+3(2i)^{2}+(2i)^{3}=1+6i-12-8i=-11-2i$。実部 $-11$、虚部 $-2$ の和は $-13$。"
+          "solution_md": "$(1+2i)^{3}=1+3(2i)+3(2i)^{2}+(2i)^{3}=1+6i-12-8i=-11-2i$。実部 $-11$、虚部 $-2$ の和は $-13$。",
+          "learning_points": [
+            "複素数のべきは二項展開し、$i^2=-1$ を使って実部と虚部に分ける。",
+            "最後に求める量が実部・虚部のどの組合せかを確認する。"
+          ]
         },
         {
           "label": "(4)",
@@ -52,7 +66,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "0", "boxes": ["9"]},
             {"format": "integer", "value": "25", "boxes": ["10", "11"]}
           ],
-          "solution_md": "平均は $4$。偏差の2乗和は $9+4+1+0+1+4+9=28$ なので分散は $28\\div7=4$。全データを $c$ 倍すると分散は $c^{2}$ 倍になるので、$0.25$ 倍したデータの分散は $4\\times0.25^{2}=4\\times0.0625=0.25$。"
+          "solution_md": "平均は $4$。偏差の2乗和は $9+4+1+0+1+4+9=28$ なので分散は $28\\div7=4$。全データを $c$ 倍すると分散は $c^{2}$ 倍になるので、$0.25$ 倍したデータの分散は $4\\times0.25^{2}=4\\times0.0625=0.25$。",
+          "learning_points": [
+            "分散は平均からの偏差を二乗して平均したもの。",
+            "データを $c$ 倍すると、分散は $c^2$ 倍になる。",
+            "計算を始める前に、使える性質で処理量を減らす。"
+          ]
         },
         {
           "label": "(5)",
@@ -61,7 +80,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "4", "boxes": ["12"]},
             {"format": "integer", "value": "2", "boxes": ["13"]}
           ],
-          "solution_md": "$S_4-S_3=a_4=18$、$S_5-S_4=a_5=22$。公差は $d=a_5-a_4=4$。$a_4=a_1+3d=18$ より $a_1=6$。よって $a_n=6+4(n-1)=4n+2$。"
+          "solution_md": "$S_4-S_3=a_4=18$、$S_5-S_4=a_5=22$。公差は $d=a_5-a_4=4$。$a_4=a_1+3d=18$ より $a_1=6$。よって $a_n=6+4(n-1)=4n+2$。",
+          "learning_points": [
+            "隣り合う部分和の差は、その間の1項に等しい。",
+            "等差数列では、2項の差から公差を決められる。",
+            "求めた初項と公差を一般項の形に戻す。"
+          ]
         }
       ]
     },
@@ -126,7 +150,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
           "answer_fields": [
             {"format": "integer", "value": "18", "boxes": ["18", "19"]}
           ],
-          "solution_md": "$t=2^{x}$ とおくと $t+\\dfrac1t=3$。$8^{x}+8^{-x}=t^{3}+\\dfrac1{t^{3}}=\\left(t+\\dfrac1t\\right)^{3}-3\\left(t+\\dfrac1t\\right)=27-9=18$。"
+          "solution_md": "$t=2^{x}$ とおくと $t+\\dfrac1t=3$。$8^{x}+8^{-x}=t^{3}+\\dfrac1{t^{3}}=\\left(t+\\dfrac1t\\right)^{3}-3\\left(t+\\dfrac1t\\right)=27-9=18$。",
+          "learning_points": [
+            "指数の底をそろえるため、$t=2^x$ のように置き換える。",
+            "対称な式は、$t+1/t$ の形をひとまとまりとして扱う。",
+            "高い次数の計算を、対称式の公式で低い次数の条件に戻す。"
+          ]
         },
         {
           "label": "(2)",
@@ -136,7 +165,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "5", "boxes": ["21"]},
             {"format": "integer", "value": "2", "boxes": ["22"]}
           ],
-          "solution_md": "$t+\\dfrac1t=3$ より $t^{2}-3t+1=0$ なので $t=\\dfrac{3\\pm\\sqrt5}{2}$。$x=\\log_{2}t=\\log_{2}\\dfrac{3\\pm\\sqrt5}{2}$。"
+          "solution_md": "$t+\\dfrac1t=3$ より $t^{2}-3t+1=0$ なので $t=\\dfrac{3\\pm\\sqrt5}{2}$。$x=\\log_{2}t=\\log_{2}\\dfrac{3\\pm\\sqrt5}{2}$。",
+          "learning_points": [
+            "分母を払って、置き換えた文字の二次方程式にする。",
+            "置き換えを戻すときは、対数の定義に沿って書き直す。",
+            "途中で得た複数の解を、元の置き換えと照合する。"
+          ]
         }
       ]
     },
@@ -159,7 +193,11 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
           "answer_fields": [
             {"format": "integer", "value": "56", "boxes": ["23", "24"]}
           ],
-          "solution_md": "厳密に増加する5個の数の並びは、1〜8から異なる5個を選べば増加順は1通りに定まる。よって ${}_8C_5=56$ 通り。"
+          "solution_md": "厳密に増加する5個の数の並びは、1〜8から異なる5個を選べば増加順は1通りに定まる。よって ${}_8C_5=56$ 通り。",
+          "learning_points": [
+            "増加順が指定されているとき、選んだ集合の並べ方は1通り。",
+            "順序を数える問題に見えても、組合せに置き換えられる場合がある。"
+          ]
         },
         {
           "label": "(2)",
@@ -167,7 +205,11 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
           "answer_fields": [
             {"format": "integer", "value": "35", "boxes": ["25", "26"]}
           ],
-          "solution_md": "$3$〜$6$ の4個の値から重複を許して4個選び非減少に並べる場合の数は重複組合せ ${}_4H_4={}_7C_4=35$ 通り。"
+          "solution_md": "$3$〜$6$ の4個の値から重複を許して4個選び非減少に並べる場合の数は重複組合せ ${}_4H_4={}_7C_4=35$ 通り。",
+          "learning_points": [
+            "非減少の並びは、重複を許した選び方として数える。",
+            "重複組合せ ${}_nH_r$ を通常の組合せ ${}_{n+r-1}C_r$ に変換する。"
+          ]
         },
         {
           "label": "(3)",
@@ -177,7 +219,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "10", "boxes": ["28", "29"]},
             {"format": "integer", "value": "50", "boxes": ["30", "31"]}
           ],
-          "solution_md": "$a_4=a_1+3\\le8$ より $a_1\\le5$ なので最大値は $5$。$a_1$が最小の $1$ のとき $a_4=4$、$a_2,a_3$ は $1\\le a_2\\le a_3\\le4$ を満たす重複組合せで ${}_4H_2={}_5C_2=10$ 通り。$a_1=1,2,3,4,5$ のどの場合も範囲の幅は同じ4個なので各10通りずつ、合計 $5\\times10=50$ 通り。"
+          "solution_md": "$a_4=a_1+3\\le8$ より $a_1\\le5$ なので最大値は $5$。$a_1$が最小の $1$ のとき $a_4=4$、$a_2,a_3$ は $1\\le a_2\\le a_3\\le4$ を満たす重複組合せで ${}_4H_2={}_5C_2=10$ 通り。$a_1=1,2,3,4,5$ のどの場合も範囲の幅は同じ4個なので各10通りずつ、合計 $5\\times10=50$ 通り。",
+          "learning_points": [
+            "数列の制約から、まず端の項がとれる範囲を決める。",
+            "場合分けしても各場合の構造が同じなら、代表例を数えて掛け算できる。",
+            "非減少条件は重複組合せで表せる。"
+          ]
         }
       ]
     },
@@ -201,7 +248,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "2", "boxes": ["32"]},
             {"format": "integer", "value": "9", "boxes": ["33"]}
           ],
-          "solution_md": "$A(0,0)$,$B(4,0)$,$D(p,h)$,$C(p+2,h)$ とおく。$DA=3$ より $p^{2}+h^{2}=9$、$BC=2$ より $(p-2)^{2}+h^{2}=4$。辺々引いて $4p-4=5$ より $p=\\dfrac94$,$h^{2}=9-\\dfrac{81}{16}=\\dfrac{63}{16}$。$E(2,0)$ なので $DE^{2}=\\left(2-\\frac94\\right)^{2}+h^{2}=\\dfrac1{16}+\\dfrac{63}{16}=4$、$DE=2$。$\\overrightarrow{AB}\\cdot\\overrightarrow{AD}=(4,0)\\cdot\\left(\\frac94,h\\right)=9$。"
+          "solution_md": "$A(0,0)$,$B(4,0)$,$D(p,h)$,$C(p+2,h)$ とおく。$DA=3$ より $p^{2}+h^{2}=9$、$BC=2$ より $(p-2)^{2}+h^{2}=4$。辺々引いて $4p-4=5$ より $p=\\dfrac94$,$h^{2}=9-\\dfrac{81}{16}=\\dfrac{63}{16}$。$E(2,0)$ なので $DE^{2}=\\left(2-\\frac94\\right)^{2}+h^{2}=\\dfrac1{16}+\\dfrac{63}{16}=4$、$DE=2$。$\\overrightarrow{AB}\\cdot\\overrightarrow{AD}=(4,0)\\cdot\\left(\\frac94,h\\right)=9$。",
+          "learning_points": [
+            "図形の条件を座標に置き、長さを二次方程式に翻訳する。",
+            "同じ高さをもつ2つの式を引くと、未知量を減らせる。",
+            "最後に求める量に合う公式へ戻す。"
+          ]
         },
         {
           "label": "(2)",
@@ -211,7 +263,11 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "2", "boxes": ["35"]},
             {"format": "integer", "value": "7", "boxes": ["36"]}
           ],
-          "solution_md": "$\\triangle ABD=\\dfrac12\\left|\\,4h-0\\cdot\\dfrac94\\,\\right|=2h$。$h=\\dfrac{3\\sqrt7}{4}$ なので面積は $\\dfrac32\\sqrt7$。"
+          "solution_md": "$\\triangle ABD=\\dfrac12\\left|\\,4h-0\\cdot\\dfrac94\\,\\right|=2h$。$h=\\dfrac{3\\sqrt7}{4}$ なので面積は $\\dfrac32\\sqrt7$。",
+          "learning_points": [
+            "座標が与えられた三角形の面積は、底辺と高さまたは行列式で求める。",
+            "前問で求めた値を、次の小問の計算に再利用する。"
+          ]
         },
         {
           "label": "(3)",
@@ -225,7 +281,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "24", "boxes": ["42", "43"]},
             {"format": "integer", "value": "7", "boxes": ["44"]}
           ],
-          "solution_md": "$\\overrightarrow{u}=\\overrightarrow{AB}$,$\\overrightarrow{v}=\\overrightarrow{AD}$ とおくと $\\overrightarrow{DC}=\\frac12\\overrightarrow{u}$ なので $C=\\overrightarrow{v}+\\frac12\\overrightarrow{u}$。$M=\\frac34\\overrightarrow{u}+\\frac12\\overrightarrow{v}$（$BC$の中点),$N=\\frac14\\overrightarrow{u}+\\overrightarrow{v}$（$CD$の中点)。直線$AM$は$t\\left(\\frac34u+\\frac12v\\right)$、直線$BN$は$u+s\\left(-\\frac34u+v\\right)$。係数を比較して $t=\\frac89$、$\\overrightarrow{AP}=\\frac23\\overrightarrow{u}+\\frac49\\overrightarrow{v}$。$P,M,C,N$を$(u,v)$係数平面でシューレースすると面積比は $\\frac{7}{72}$、実面積は $\\frac{7}{72}\\times3\\sqrt7=\\frac{7}{24}\\sqrt7$。"
+          "solution_md": "$\\overrightarrow{u}=\\overrightarrow{AB}$,$\\overrightarrow{v}=\\overrightarrow{AD}$ とおくと $\\overrightarrow{DC}=\\frac12\\overrightarrow{u}$ なので $C=\\overrightarrow{v}+\\frac12\\overrightarrow{u}$。$M=\\frac34\\overrightarrow{u}+\\frac12\\overrightarrow{v}$（$BC$の中点),$N=\\frac14\\overrightarrow{u}+\\overrightarrow{v}$（$CD$の中点)。直線$AM$は$t\\left(\\frac34u+\\frac12v\\right)$、直線$BN$は$u+s\\left(-\\frac34u+v\\right)$。係数を比較して $t=\\frac89$、$\\overrightarrow{AP}=\\frac23\\overrightarrow{u}+\\frac49\\overrightarrow{v}$。$P,M,C,N$を$(u,v)$係数平面でシューレースすると面積比は $\\frac{7}{72}$、実面積は $\\frac{7}{72}\\times3\\sqrt7=\\frac{7}{24}\\sqrt7$。",
+          "learning_points": [
+            "ベクトルの基底を置くと、図形の点を係数で表せる。",
+            "直線の交点は、基底ごとの係数を比較して求める。",
+            "係数平面の面積比を、元の図形の面積へ戻す。"
+          ]
         }
       ]
     },
@@ -249,7 +310,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "2", "boxes": ["45"]},
             {"format": "integer", "value": "3", "boxes": ["46"]}
           ],
-          "solution_md": "すべての$x$で連続なので $b>0$。$f(1)=\\dfrac{a+2}{1+b}=1$ より $a=b-1$。$f'(x)=\\dfrac{a(x^{2}+b)-(ax+2)(2x)}{(x^{2}+b)^{2}}$ で $f'(1)=0$ より $a(1+b)-2(a+2)=0$。$a=b-1$ を代入すると $a^{2}=4$ となり $a=\\pm2$。$b=a+1>0$ を満たすのは $a=2,\\,b=3$。"
+          "solution_md": "すべての$x$で連続なので $b>0$。$f(1)=\\dfrac{a+2}{1+b}=1$ より $a=b-1$。$f'(x)=\\dfrac{a(x^{2}+b)-(ax+2)(2x)}{(x^{2}+b)^{2}}$ で $f'(1)=0$ より $a(1+b)-2(a+2)=0$。$a=b-1$ を代入すると $a^{2}=4$ となり $a=\\pm2$。$b=a+1>0$ を満たすのは $a=2,\\,b=3$。",
+          "learning_points": [
+            "関数の連続性から、分母が0にならない条件を先に確認する。",
+            "極値の条件を、関数値と微分係数の2つの式に翻訳する。",
+            "最後に定義域の条件で候補を絞り込む。"
+          ]
         },
         {
           "label": "(2)",
@@ -262,7 +328,12 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
             {"format": "integer", "value": "2", "boxes": ["53"]},
             {"format": "integer", "value": "3", "boxes": ["54"]}
           ],
-          "solution_md": "$f(x)=\\dfrac{2x+2}{x^{2}+3}=0$ より $x=-1$、交点は $(-1,0)$。区間 $[-1,1]$ で $f(x)\\ge0$ なので、求める体積は $V=\\pi\\displaystyle\\int_{-1}^{1}f(x)^{2}dx$。部分分数・置換積分により計算すると $V=\\dfrac{8}{27}\\sqrt3\\,\\pi^{2}-\\dfrac{2}{3}\\pi$。"
+          "solution_md": "$f(x)=\\dfrac{2x+2}{x^{2}+3}=0$ より $x=-1$、交点は $(-1,0)$。区間 $[-1,1]$ で $f(x)\\ge0$ なので、求める体積は $V=\\pi\\displaystyle\\int_{-1}^{1}f(x)^{2}dx$。部分分数・置換積分により計算すると $V=\\dfrac{8}{27}\\sqrt3\\,\\pi^{2}-\\dfrac{2}{3}\\pi$。",
+          "learning_points": [
+            "回転体の体積は、回転軸からの距離を二乗して積分する。",
+            "積分区間と関数の符号を確認してから体積公式を立てる。",
+            "複雑な積分は、部分分数分解や置換で計算可能な形に分ける。"
+          ]
         }
       ]
     }
