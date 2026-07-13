@@ -32,10 +32,10 @@ window.MATH_DETAIL_TEXTS.nichidai_2026_zengaku1 = {
     "一般項は $a_n=a_1+(n-1)d=6+4(n-1)=4n+2$。"
   ],
   "2-(1)": [
-    "$\\theta$ は第2象限の角なので $\\sin\\theta>0,\\cos\\theta<0$。",
-    "$\\tan\\theta=-\\dfrac43$ から直角三角形の比を考え、$\\sin\\theta=\\dfrac45,\\cos\\theta=-\\dfrac35$。",
-    "半角の公式 $\\tan\\dfrac{\\theta}{2}=\\dfrac{\\sin\\theta}{1+\\cos\\theta}$ を使う。",
-    "$\\dfrac{4/5}{1-3/5}=\\dfrac{4/5}{2/5}=2$。"
+    "$x=\\dfrac{\\theta}{2}$ とおくと、条件より $\\dfrac{\\pi}{4}<x<\\dfrac{\\pi}{2}$。したがって $t=\\tan x>1$。",
+    "2倍角公式 $\\tan 2x=\\dfrac{2\\tan x}{1-\\tan^2x}$ を使う。$\\tan\\theta=\\tan 2x=-\\dfrac43$ なので、$\\dfrac{2t}{1-t^2}=-\\dfrac43$。",
+    "整理すると $6t=-4+4t^2$、すなわち $2t^2-3t-2=0$。",
+    "$(2t+1)(t-2)=0$ だが、$t>1$ より $t=2$。したがって $\\tan\\dfrac{\\theta}{2}=2$。"
   ],
   "2-(2)": [
     "$\\dfrac{3\\theta}{2}=\\theta+\\dfrac{\\theta}{2}$ と分解し、加法定理 $\\tan(A+B)=\\dfrac{\\tan A+\\tan B}{1-\\tan A\\tan B}$ を使う。",

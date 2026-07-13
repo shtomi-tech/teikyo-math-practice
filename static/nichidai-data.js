@@ -68,10 +68,10 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
     {
       "group_number": "2",
       "page_numbers": [2],
-      "title": "三角関数（半角・3θ/2の加法定理）",
+      "title": "三角関数（2倍角・3θ/2の加法定理）",
       "subject": "数学",
       "unit": "日本大学2026 N全学統一(第1期)",
-      "topic_tag": "三角関数(半角・加法定理)",
+      "topic_tag": "三角関数(2倍角・加法定理)",
       "difficulty": 3,
       "source_name": "日本大学 N全学統一方式第1期",
       "source_year": "2026",
@@ -84,7 +84,7 @@ window.MATH_DATASETS.nichidai_2026_zengaku1 = {
           "answer_fields": [
             {"format": "integer", "value": "2", "boxes": ["14"]}
           ],
-          "solution_md": "$\\theta$は第2象限の角なので $\\sin\\theta=\\dfrac45$,$\\cos\\theta=-\\dfrac35$。半角の公式 $\\tan\\dfrac{\\theta}{2}=\\dfrac{\\sin\\theta}{1+\\cos\\theta}=\\dfrac{4/5}{1-3/5}=\\dfrac{4/5}{2/5}=2$。"
+          "solution_md": "$x=\\dfrac{\\theta}{2}$ とおく。$\\dfrac{\\pi}{4}<x<\\dfrac{\\pi}{2}$ なので $t=\\tan x>1$。2倍角公式より $\\tan\\theta=\\tan 2x=\\dfrac{2t}{1-t^2}$ だから、$\\dfrac{2t}{1-t^2}=-\\dfrac43$。よって $2t^2-3t-2=0$、すなわち $(2t+1)(t-2)=0$。$t>1$ より $t=2$、したがって $\\tan\\dfrac{\\theta}{2}=2$。"
         },
         {
           "label": "(2)",
