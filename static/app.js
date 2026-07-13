@@ -951,7 +951,7 @@ function bindSubChecks() {
 }
 
 function bindSolutionButtons() {
-  $("[data-open-solution]").forEach((button) => {
+  $$("[data-open-solution]").forEach((button) => {
     button.addEventListener("click", () => {
       openSolutionModal(currentGroup, Number(button.dataset.openSolution));
     });
