@@ -17,10 +17,17 @@ const DEFAULT_SCHOOLS = [
       {
         key: "sougou",
         label: "総合型選抜",
-        shortLabel: "総合型",
+        shortLabel: "総合型 2026",
         sourceTitle: "2026 総合型選抜",
         sourceText: "薬・理工学部 数学",
         legacyProgressKey: "teikyo_2026_math_practice_v1",
+      },
+      {
+        key: "sougou2024",
+        label: "総合型選抜(2024)",
+        shortLabel: "総合型 2024",
+        sourceTitle: "2024 総合型選抜",
+        sourceText: "薬・理工学部 数学",
       },
       {
         key: "recommend",
