@@ -625,7 +625,28 @@ function renderField(field) {
 }
 
 function stepsForSub(group, sub) {
-  return DETAIL_TEXTS[currentExamKey]?.[detailKey(group, sub)] || fallbackDetail(sub);
+  return hintEntryForSub(group, sub).steps;
+}
+
+function strategyForSub(group, sub) {
+  const key = detailKey(group, sub);
+  const registered = window.MATH_HINT_STRATEGIES?.[currentExamKey]?.[key];
+  if (registered?.roadmap?.length) return registered.roadmap;
+  return learningPointsFor(group, sub);
+}
+
+function strategySummaryForSub(group, sub) {
+  const registered = window.MATH_HINT_STRATEGIES?.[currentExamKey]?.[detailKey(group, sub)];
+  return registered?.summary || "細かい計算に入る前に、使う考え方と処理の順番を確認する。";
+}
+
+function hintEntryForSub(group, sub) {
+  const raw = DETAIL_TEXTS[currentExamKey]?.[detailKey(group, sub)] || fallbackDetail(sub);
+  if (Array.isArray(raw)) return { strategy: strategyForSub(group, sub), steps: raw };
+  return {
+    strategy: Array.isArray(raw.strategy) ? raw.strategy : strategyForSub(group, sub),
+    steps: Array.isArray(raw.steps) ? raw.steps : fallbackDetail(sub),
+  };
 }
 
 function hintLevelLabel(stepIndex, totalSteps) {
@@ -649,9 +670,20 @@ function renderHintBox(group, sub, subIndex, fields) {
   const entry = progress[key] || {};
   const steps = stepsForSub(group, sub);
   const shown = Math.min(entry.hintsUsed || 0, steps.length);
+  // 既存の進捗（hintsUsed だけ保存されたもの）は、方針も確認済みとして扱う。
+  const strategyViewed = entry.strategyViewed === true || shown > 0;
   const nextNumber = Math.min(shown + 1, steps.length);
-  const isAtAnswer = shown === steps.length - 1;
+  const isAtAnswer = strategyViewed && shown === steps.length - 1;
   const fieldHint = hintSummaryForFields(fields);
+  const strategy = strategyForSub(group, sub);
+  const strategySummary = strategySummaryForSub(group, sub);
+  const strategyHtml = strategyViewed ? `
+    <section class="hint-strategy" aria-label="解法の方針">
+      <div class="hint-strategy-label">APPROACH / 解法の方針</div>
+      <p class="hint-strategy-summary">${mdLite(strategySummary)}</p>
+      <ol>${strategy.map((point) => `<li>${mdLite(point)}</li>`).join("")}</ol>
+    </section>
+  ` : "";
   const revealed = steps.slice(0, shown).map((step, stepIndex) => `
     <li>
       <span class="hint-level">L${Math.min(stepIndex + 1, 4)} ${escapeHtml(hintLevelLabel(stepIndex, steps.length))}</span>
@@ -664,11 +696,12 @@ function renderHintBox(group, sub, subIndex, fields) {
   return `<div class="hint-box" data-hint-box="${subIndex}">
     <div class="hint-toolbar">
       <button class="hint-button" type="button" data-hint="${subIndex}" ${shown >= steps.length ? "disabled" : ""}>
-        ${shown >= steps.length ? "ヒント完了" : `${isAtAnswer ? "答え合わせへ" : "ヒントを見る"} (${nextNumber}/${steps.length})`}
+        ${!strategyViewed ? "解法の方針を見る" : shown >= steps.length ? "ヒント完了" : `${isAtAnswer ? "答え合わせへ" : "次のヒントを見る"} (${nextNumber}/${steps.length})`}
       </button>
-      <span class="hint-status">${shown ? `${shown}段階使用` : "ノーヒント挑戦中"}</span>
+      <span class="hint-status">${strategyViewed ? (shown ? `方針＋${shown}段階使用` : "方針確認済み") : "ノーヒント挑戦中"}</span>
     </div>
-    <div class="hint-steps">${revealed ? `<ol>${revealed}</ol>` : emptyText}</div>
+    ${strategyHtml}
+    <div class="hint-steps">${revealed ? `<ol>${revealed}</ol>` : strategyViewed ? emptyText : `<p class="hint-empty">細かい計算の前に、まず解法の方針を確認できます。</p>`}</div>
   </div>`;
 }
 
@@ -735,7 +768,8 @@ function renderSubProblem(sub, subIndex) {
   const isWrong = result && !result.correct;
   const hintSteps = stepsForSub(group, sub);
   const hintsUsed = progress[subKey(currentGroup, subIndex)]?.hintsUsed || 0;
-  const noHintBadge = isCorrect && hintsUsed === 0 ? `<span class="no-hint-badge">ノーヒント正解</span>` : "";
+  const strategyViewed = progress[subKey(currentGroup, subIndex)]?.strategyViewed === true;
+  const noHintBadge = isCorrect && hintsUsed === 0 && !strategyViewed ? `<span class="no-hint-badge">ノーヒント正解</span>` : "";
   const resultText = !result
     ? "未確認"
     : result.correct
@@ -812,11 +846,24 @@ function revealHint(subIndex) {
   const sub = group.sub_problems[subIndex];
   const key = subKey(currentGroup, subIndex);
   const steps = stepsForSub(group, sub);
-  const current = Math.min(progress[key]?.hintsUsed || 0, steps.length);
+  const entry = progress[key] || {};
+  const current = Math.min(entry.hintsUsed || 0, steps.length);
+  if (entry.strategyViewed !== true && current === 0) {
+    progress[key] = {
+      ...entry,
+      strategyViewed: true,
+      strategyAt: new Date().toISOString(),
+    };
+    saveProgress();
+    renderProblem();
+    renderScore(true);
+    return;
+  }
   if (current >= steps.length) return;
   if (current === steps.length - 1 && !confirm("最後のヒントには答えが含まれます。先に一度、今の答えで採点しますか？\n\nOK: 答え合わせのヒントを開く\nキャンセル: まだ考える")) return;
   progress[key] = {
-    ...(progress[key] || {}),
+    ...entry,
+    strategyViewed: true,
     hintsUsed: current + 1,
     hintAt: new Date().toISOString(),
   };

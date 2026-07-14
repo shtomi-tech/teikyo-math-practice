@@ -36,12 +36,36 @@ https://shtomi-tech.github.io/teikyo-math-practice/
 
 3. 段階ヒント（詳しい解き方）を足すときは `window.MATH_DETAIL_TEXTS` にキー `"<group_number>-<label>"` の配列で登録する。
 
+   方針を個別に指定する場合は、問題データの小問に `hint_strategy` を追加する。省略した場合は `static/hint-strategies.js` が `learning_points` または単元タグから自動生成する。
+
+   ```js
+   "hint_strategy": {
+     "summary": "使う考え方と処理の順番を先に決める。",
+     "roadmap": ["条件を整理する", "公式を適用する", "元の条件で確認する"]
+   }
+   ```
+
+   詳細ヒントは従来の配列形式に加えて、次の構造化形式にも対応する。
+
+   ```js
+   "1-(1)": {
+     "strategy": ["条件を整理する", "公式を適用する", "答えを確認する"],
+     "steps": ["立式する", "計算する", "空欄に合わせる"]
+   }
+   ```
+
    小問データに `learning_points` の配列を追加すると、詳細解説に「この問題から学べること」を表示できる。
 
 4. `index.html` の `<script defer>` に作成したデータファイルを追加する。
 
 - `exam.key` は DATASETS 内で一意にすること（進捗の保存キーを兼ねるため）。
 - 学校が1つだけのときは学校切替パネルは自動的に隠れる。
+
+ヒント方針の検証は次で実行する。
+
+```text
+node scripts/check-hints.js
+```
 
 ## 運用
 

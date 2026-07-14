@@ -726,6 +726,33 @@ details.panel[open] summary,
   padding-left: 1.25em;
 }
 
+.hint-strategy {
+  margin-top: 14px;
+  border: 2px solid var(--ink);
+  padding: 12px 14px;
+}
+
+.hint-strategy-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+
+.hint-strategy-summary {
+  margin: 8px 0 0;
+  font-weight: 600;
+}
+
+.hint-strategy ol {
+  margin: 8px 0 0;
+  padding-left: 1.25em;
+}
+
+.hint-strategy li {
+  padding: 4px 0;
+}
+
 .hint-steps li {
   padding: 10px 0;
   border-top: 1px solid var(--line);
