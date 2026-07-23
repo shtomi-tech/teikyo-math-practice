@@ -3,3 +3,6 @@
 
 # デプロイ時にSecretsから生成する実行時設定
 static/config.json
+
+# 問題データの原本（撮影写真・PDF等）。static/*.js化した学習データのみ公開する。
+data/
