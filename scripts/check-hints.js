@@ -13,7 +13,9 @@ vm.createContext(context);
   "static/recommend-details.js",
   "static/nichidai-data.js",
   "static/nichidai-details.js",
+  "static/rikaido2507-data.js",
   "static/hint-strategies.js",
+  "static/rikaido2507-hints.js",
 ].forEach((relative) => {
   const file = path.join(root, relative);
   vm.runInContext(fs.readFileSync(file, "utf8"), context, { filename: relative });
@@ -24,6 +26,7 @@ const datasets = {
   ...(context.window.MATH_DATASETS || {}),
 };
 const registry = context.window.MATH_HINT_STRATEGIES || {};
+const detailTexts = context.window.MATH_DETAIL_TEXTS || {};
 const errors = [];
 let subProblemCount = 0;
 
@@ -35,6 +38,12 @@ for (const [examKey, dataset] of Object.entries(datasets)) {
       const strategy = registry[examKey]?.[key];
       if (!strategy?.summary || !Array.isArray(strategy.roadmap) || strategy.roadmap.length < 3) {
         errors.push(`${examKey}/${key}: 解法の方針が不完全`);
+      }
+      if (examKey === "rikaido_2507_beta") {
+        const steps = detailTexts[examKey]?.[key];
+        if (!Array.isArray(steps) || steps.length < 3 || steps.some((step) => !String(step).trim())) {
+          errors.push(`${examKey}/${key}: 段階ヒントが不完全`);
+        }
       }
     }
   }

@@ -40,6 +40,8 @@ https://shtomi-tech.github.io/teikyo-math-practice/
 
    方針を個別に指定する場合は、問題データの小問に `hint_strategy` を追加する。省略した場合は `static/hint-strategies.js` が `learning_points` または単元タグから自動生成する。
 
+   理解度確認テスト（2025年7月 βコース）のように、方針と詳細ヒントをまとめて管理する場合は、`static/rikaido2507-hints.js` の形式を使える。方針だけでなく、利用者が次に行う操作まで記述する。
+
    ```js
    "hint_strategy": {
      "summary": "使う考え方と処理の順番を先に決める。",
@@ -68,6 +70,8 @@ https://shtomi-tech.github.io/teikyo-math-practice/
 ```text
 node scripts/check-hints.js
 ```
+
+この検証では、βコースについて方針が3段階以上あることに加え、詳細ヒントが3段階以上登録されていることも確認する。
 
 ## 運用
 
